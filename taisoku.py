@@ -1,11 +1,27 @@
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import streamlit as st
-import pandas as pd
-import numpy as np
-import datetime
 import json
 import os
+
+# Render の Secret Files から Google認証用 JSONファイルを読み込む
+file_path = "/etc/secrets/broiler-taisoku-45883b87495b.json"  # Renderにアップロードしたファイルのパス
+
+# 認証用のJSONファイルを開く
+with open(file_path) as f:
+    service_account_info = json.load(f)
+
+# Google Sheets API の範囲を指定
+scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+
+# 認証に使うコード
+credentials = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
+
+# Google Sheets APIのクライアントを作成
+client = gspread.authorize(credentials)
+
+# ここからはクライアントを使ってGoogle Sheetsにアクセスする処理
+
 
 # Renderの環境変数として設定した値を読み込む
 service_account_info = json.loads(os.getenv('broiler-taisoku-45883b87495b.json'))
